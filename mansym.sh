@@ -49,7 +49,9 @@ mansym() (
   # E.g. foo.1 -> 1
   section="${section##*.}"
 
-  if [ -z "$filename" ] || [ -z "$section" ] || [ -n "$(echo "$section" | tr -d '[:alnum:]')" ]; then
+  if [ -z "$filename" ] \
+    || [ -z "$section" ] \
+    || [ -n "$(echo "$section" | tr -d '[:alnum:]')" ]; then
     _err 'Failed to parse the man-pages path. Expected: `/foo/bar/baz.1`'
     exit 1
   fi
