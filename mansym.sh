@@ -31,15 +31,14 @@
 
 mansym() (
   _err() { echo "$@" >/dev/null 1>&2; }
-  _exit() { unset _err _exit; exit $1; }
 
   local newman
   if [ -z "$1" ]; then
     _err 'Missing first arg; a path of new man-pages file.'
-    _exit 2
+    exit 2
   elif [ ! -f "$1" ]; then
     _err "${1} is not a regular file."
-    _exit 1
+    exit 1
   fi
   newman="$1"
 
@@ -50,22 +49,22 @@ mansym() (
   # E.g. foo.1 -> 1
   section="${section##*.}"
 
-  if [ -z "$filename" ] || [ ! "$section" =~ '[0-9a-zA-Z]+' ]; then
+  if [ -z "$filename" ] || [ -z "$section" ] || [ -n "$(echo "$section" | tr -d '[:alnum:]')" ]; then
     _err 'Failed to parse the man-pages path. Expected: `/foo/bar/baz.1`'
-    _exit 1
+    exit 1
   fi
 
   local mandir
   if [ -z "$2" ]; then
     _err 'Missing second arg; a directory path of man utils detectables.'
     _err 'See the SEARCH PATH section of manpath(5).'
-    _exit 2
+    exit 2
   else
     case "$(command manpath)" in
       *"$mandir"*) ;;
       *)
         _err 'The specified man directory is not in `manpath` result.'
-        _exit 1
+        exit 1
         ;;
     esac
   fi
@@ -74,12 +73,12 @@ mansym() (
 
   [ -d "$mandir" ] \
     || command mkdir -p "$mandir" \
-    || _exit 3
+    || exit 3
 
   command ln -sfv "$newman" "${mandir}/${filename}" \
-    || _exit 4
+    || exit 4
   command mandb \
-    || _exit 5
+    || exit 5
 
-  _exit 0
+  exit 0
 )
