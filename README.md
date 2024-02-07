@@ -1,3 +1,3 @@
 # util.sh
 
-Miscellaneous shell utilities for personal use.
+Miscellaneous shell utilities for my personal use.
